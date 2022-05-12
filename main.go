@@ -24,25 +24,33 @@ func main() {
 	dial := mysql.Open(dsn)
 	db, err := gorm.Open(dial, &gorm.Config{
 		Logger: &SqlLogger{},
-		DryRun: true,
+		// DryRun: true,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	db.Migrator().CreateTable(Gender{})
-	// db.AutoMigrate(Gender{})
+	db.AutoMigrate(Gender{}, Test{})
 
 }
 
 type Gender struct {
 	ID   uint
-	Code uint `gorm:"primaryKey;comment:this is Code"`
-	// Name string `gorm:"column:myname;type:varchar(50)"`
-	Name string `gorm:"column:myname;size:20;unique;default:Hello;not null"`
-	Age  int
+	Name string `gorm:"unique;size:20"`
 }
 
-func (g Gender) TableName() string {
-	return "Mygender"
+type Test struct {
+	gorm.Model
+	Code uint   `gorm:"primaryKey;comment:this is Code"`
+	Name string `gorm:"column:myname;size:20;unique;default:Hello;not null"`
 }
+
+// type Gender struct {
+// 	gorm.Model
+// 	Code uint   `gorm:"primaryKey;comment:this is Code"`
+// 	Name string `gorm:"column:myname;size:20;unique;default:Hello;not null"`
+// }
+
+// func (g Gender) TableName() string {
+// 	return "MyGender"
+// }
